@@ -24,7 +24,7 @@ hs_err_pid*
 apache-activemq-5.15.9/
 apache-activemq-5.15.9-bin.tar.gz
 .DS_Store
-
+*.db
 ### IntelliJ IDEA ###
 .idea/
 *.iws

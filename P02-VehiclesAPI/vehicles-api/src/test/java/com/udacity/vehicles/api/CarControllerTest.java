@@ -20,15 +20,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.net.URI;
 import java.util.Collections;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 /**
  * Implements testing of the CarController class.
  */
@@ -41,7 +38,7 @@ public class CarControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    @Autowired
+   @Autowired
     private JacksonTester<Car> json;
 
     @MockBean
@@ -52,7 +49,6 @@ public class CarControllerTest {
 
     @MockBean
     private MapsClient mapsClient;
-
     /**
      * Creates pre-requisites for testing, such as an example car.
      */
@@ -64,7 +60,6 @@ public class CarControllerTest {
         given(carService.findById(any())).willReturn(car);
         given(carService.list()).willReturn(Collections.singletonList(car));
     }
-
     /**
      * Tests for successful creation of new car in the system
      * @throws Exception when car creation fails in the system
@@ -79,7 +74,6 @@ public class CarControllerTest {
                         .accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isCreated());
     }
-
     /**
      * Tests if the read operation appropriately returns a list of vehicles.
      * @throws Exception if the read operation of the vehicle list fails
@@ -91,6 +85,10 @@ public class CarControllerTest {
          *   the whole list of vehicles. This should utilize the car from `getCar()`
          *   below (the vehicle will be the first in the list).
          */
+        //List<Car> cars;
+        //this.mvc.perform(get("/cars").accept(MediaType.APPLICATION_JSON_UTF8)
+        //        .andExpect(status().isOk())
+         //       .andExpect(content().json("{'data':[{'useRegEx':'false','hosts':'v2v2v2'}]}"));
 
     }
 

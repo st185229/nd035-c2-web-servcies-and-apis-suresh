@@ -1,7 +1,5 @@
 package com.udacity.vehicles.domain.car;
-
 import com.udacity.vehicles.domain.Condition;
-import com.udacity.vehicles.domain.manufacturer.Manufacturer;
 import com.udacity.vehicles.domain.manufacturer.ManufacturerRepository;
 import org.junit.Test;
 import org.junit.jupiter.api.Order;
@@ -26,7 +24,7 @@ public class CarRepositoryTest {
 
     @Test
     @Order(0)
-    public void it_can_create_and_save_newcar() {
+    public void it_can_create_and_save_new_car() {
          var initialCarCount = carRepository.findAll().size();
          var car = new Car();
          car.setId(1L);

@@ -15,17 +15,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Order;
 import org.junit.runner.RunWith;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.net.URI;
@@ -33,6 +32,8 @@ import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Implements testing of the CarController class.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
 public class CarControllerTest {
@@ -59,6 +60,11 @@ public class CarControllerTest {
 
     @MockBean
     private MapsClient mapsClient;
+
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
 
     /**
      * Creates pre-requisites for testing, such as an example car.
@@ -103,7 +109,7 @@ public class CarControllerTest {
          *   below (the vehicle will be the first in the list).
          */
 
-         Car car = getCar();
+        Car car = getCar();
 
         mvc.perform(get("/cars")
                 .content(String.valueOf(MediaType.valueOf("application/x-spring-data-verbose+json")))
@@ -138,9 +144,10 @@ public class CarControllerTest {
                 .andReturn();
         ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         Car storedCar = mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), Car.class);
-        Assert.assertNotEquals(car,storedCar);
+        Assert.assertNotEquals(car, storedCar);
 
     }
+
     /**
      * Tests the deletion of a single car by ID.
      *
@@ -154,18 +161,24 @@ public class CarControllerTest {
          *   when the `delete` method is called from the Car Controller. This
          *   should utilize the car from `getCar()` below.
          */
-        this.mvc.perform(MockMvcRequestBuilders
-                .delete("/cars/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isAccepted());
-
+        //Make sure that car with id there
+        Car car = getCar();
         var mvcResult = mvc.perform(get("/cars/1")
                 .content(String.valueOf(MediaType.valueOf("application/x-spring-data-verbose+json")))
                 .accept(MediaType.valueOf("application/x-spring-data-verbose+json")))
-                .andExpect(status().isNotFound());
-
-
+                .andExpect(status().isOk())
+                .andReturn();
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        Car storedCar = mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), Car.class);
+        //Assert the car stored in the repo is same as we created
+        Assert.assertNotEquals(car, storedCar);
+        //Delete
+        mvc.perform(
+                delete("/cars/{id}", storedCar.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isAccepted());
+        verify(carService, times(1)).delete(storedCar.getId());
 
     }
 

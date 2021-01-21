@@ -36,7 +36,12 @@ public class CarService {
      * @return a list of all vehicles in the CarRepository
      */
     public List<Car> list() {
-        return repository.findAll();
+
+        var carsFound = repository.findAll();
+        if(carsFound.isEmpty()){
+            throw new CarNotFoundException("No cars in the stock");
+        }
+        return carsFound;
     }
 
     /**
@@ -112,20 +117,16 @@ public class CarService {
      *
      * @param id the ID number of the car to delete
      */
-    public Long delete(Long id) {
+    public void delete(Long id) {
         /**
          * DONE: Find the car by ID from the `repository` if it exists.
          *   If it does not exist, throw a CarNotFoundException
          */
-
         var foundCar = repository.findById(id);
         if (foundCar.isPresent()) {
-            repository.deleteById(id);
-            //repository.delete(foundCar.get());
-            return id;
+            repository.deleteById(foundCar.get().getId());
         } else {
             throw new CarNotFoundException("Car with #" + id + " Not found");
         }
-
     }
 }

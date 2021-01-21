@@ -108,7 +108,6 @@ class CarController {
         Resource<Car> resource = assembler.toResource(savedCar);
         return ResponseEntity.ok(resource);
     }
-
     /**
      * Removes a vehicle from the system.
      *
@@ -117,13 +116,7 @@ class CarController {
      */
     @DeleteMapping("/{id}")
     ResponseEntity<?> delete(@PathVariable Long id) {
-        /**
-         * DONE: Use the Car Service to delete the requested vehicle.
-         */
-        var returnValue = carService.delete(id);
-        if (returnValue != id) {
-            throw new CarNotFoundException("Card with #" + id +" Not found");
-        }
+        carService.delete(id);
         return ResponseEntity.accepted().build();
     }
 }

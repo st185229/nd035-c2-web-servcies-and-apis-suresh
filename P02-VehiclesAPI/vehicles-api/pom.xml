@@ -101,6 +101,10 @@
             <version>2.9.2</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-rest-webmvc</artifactId>
+        </dependency>
 
     </dependencies>
     <build>
@@ -120,11 +124,11 @@
                         <configuration>
                             <sourceRoot>${project.build.directory}/generated-sources/cxf
                             </sourceRoot>
-                         <!--   <wsdlOptions>
-                                <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/price.wsdl</wsdl>
-                                </wsdlOption>
-                            </wsdlOptions> -->
+                            <!--   <wsdlOptions>
+                                   <wsdlOption>
+                                       <wsdl>${basedir}/src/main/resources/price.wsdl</wsdl>
+                                   </wsdlOption>
+                               </wsdlOptions> -->
                         </configuration>
                         <goals>
                             <goal>wsdl2java</goal>

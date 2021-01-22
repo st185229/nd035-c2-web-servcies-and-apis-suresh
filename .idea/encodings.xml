@@ -9,5 +9,6 @@
     <file url="file://$PROJECT_DIR$/P02-VehiclesAPI/pricing-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/P02-VehiclesAPI/vehicles-api/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/P02-VehiclesAPI/vehicles-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/P02-VehiclesAPI/vehicles-api/target/generated-sources/cxf" charset="UTF-8" />
   </component>
 </project>

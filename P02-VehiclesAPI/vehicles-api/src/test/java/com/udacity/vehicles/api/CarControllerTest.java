@@ -157,11 +157,11 @@ public class CarControllerTest {
     @Order(3)
     public void it_should_be_able_to_delete_a_specific_car() throws Exception {
         /**
-         * TODO: Add a test to check whether a vehicle is appropriately deleted
+         * DONE: Add a test to check whether a vehicle is appropriately deleted
          *   when the `delete` method is called from the Car Controller. This
          *   should utilize the car from `getCar()` below.
          */
-        //Make sure that car with id there
+        // Step 1, get the car from database
         Car car = getCar();
         var mvcResult = mvc.perform(get("/cars/1")
                 .content(String.valueOf(MediaType.valueOf("application/x-spring-data-verbose+json")))
@@ -172,13 +172,13 @@ public class CarControllerTest {
         Car storedCar = mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), Car.class);
         //Assert the car stored in the repo is same as we created
         Assert.assertNotEquals(car, storedCar);
-        //Delete
+
+        //Step 2 Delete by passing the same car i
         mvc.perform(
-                delete("/cars/{id}", storedCar.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isAccepted());
-        verify(carService, times(1)).delete(storedCar.getId());
+                delete(new URI("/cars/1"))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                         .andExpect(status().is(204));
 
     }
 

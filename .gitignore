@@ -30,3 +30,4 @@ apache-activemq-5.15.9-bin.tar.gz
 *.iws
 *.iml
 *.ipr
+/P02-VehiclesAPI/vehicles-api/data/

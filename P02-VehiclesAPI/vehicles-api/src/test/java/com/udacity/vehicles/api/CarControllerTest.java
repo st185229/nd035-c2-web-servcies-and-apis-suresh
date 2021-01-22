@@ -32,8 +32,6 @@ import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -149,12 +147,59 @@ public class CarControllerTest {
     }
 
     /**
+     * Tests the update operation for a single car by ID.
+     *
+     * @throws Exception if the read operation for a single car fails
+     */
+    @Test
+    @Order(3)
+    public void it_should_be_able_to_update_a_specific_car() throws Exception {
+        /**
+         * DONE: Add a test to check whether a vehicle is appropriately deleted
+         *   when the `delete` method is called from the Car Controller. This
+         *   should utilize the car from `getCar()` below.
+         */
+        // Step 1, get the car from database
+
+        var mvcResult = mvc.perform(get("/cars/1")
+                .content(String.valueOf(MediaType.valueOf("application/x-spring-data-verbose+json")))
+                .accept(MediaType.valueOf("application/x-spring-data-verbose+json")))
+                .andExpect(status().isOk())
+                .andReturn();
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        Car storedCar = mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), Car.class);
+        //Update the stored car
+        var updatedCar = updateCar(storedCar);
+        //Perform an update
+        mvc.perform(
+                put(new URI("/cars/1"))
+                        .content(json.write(updatedCar).getJson())
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk());
+        //Get the updated car from DB
+
+        mvcResult = mvc.perform(get("/cars/1")
+                .content(String.valueOf(MediaType.valueOf("application/x-spring-data-verbose+json")))
+                .accept(MediaType.valueOf("application/x-spring-data-verbose+json")))
+                .andExpect(status().isOk())
+                .andReturn();
+        mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        var updatedCarFromDB = mapper.readValue(mvcResult.getResponse().getContentAsByteArray(), Car.class);
+
+        // Check whether its udpated to Bentley
+        Assert.assertNotEquals(updatedCarFromDB.getDetails().getModel(), "Bentley Continental GT");
+
+
+    }
+
+    /**
      * Tests the deletion of a single car by ID.
      *
      * @throws Exception if the delete operation of a vehicle fails
      */
     @Test
-    @Order(3)
+    @Order(4)
     public void it_should_be_able_to_delete_a_specific_car() throws Exception {
         /**
          * DONE: Add a test to check whether a vehicle is appropriately deleted
@@ -178,7 +223,7 @@ public class CarControllerTest {
                 delete(new URI("/cars/1"))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .accept(MediaType.APPLICATION_JSON_UTF8))
-                         .andExpect(status().is(204));
+                .andExpect(status().is(204));
 
     }
 
@@ -205,5 +250,25 @@ public class CarControllerTest {
         car.setDetails(details);
         car.setCondition(Condition.USED);
         return car;
+    }
+
+
+    private Car updateCar(Car givenCar) {
+        givenCar.setLocation(new Location(20.730610, -13.935242));
+        Details details = new Details();
+        Manufacturer manufacturer = new Manufacturer(105, "Bentley");
+        details.setManufacturer(manufacturer);
+        details.setModel("Bentley Continental GT");
+        details.setMileage(32280);
+        details.setExternalColor("white");
+        details.setBody("sedan");
+        details.setEngine("626 hp @ 6000 rpm");
+        details.setFuelType("Gasoline");
+        details.setModelYear(2020);
+        details.setProductionYear(2021);
+        details.setNumberOfDoors(4);
+        givenCar.setDetails(details);
+        givenCar.setCondition(Condition.NEW);
+        return givenCar;
     }
 }
